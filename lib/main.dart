@@ -6,8 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 final supabase = Supabase.instance.client;
 Future<void> main() async {
   await Supabase.initialize(
-    url: 'url',
-    anonKey: 'key'
+    url: 'https://jojdqogtckxiypvhpztp.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvamRxb2d0Y2t4aXlwdmhwenRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg4OTMwOTQsImV4cCI6MjAxNDQ2OTA5NH0.rFud9w095dLZz3r7XIA-uFLhhFr8pQsjoRKHWwbKMBw'
   );
   
   runApp(MyApp());
