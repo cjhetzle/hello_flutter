@@ -1,8 +1,15 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+final supabase = Supabase.instance.client;
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'url',
+    anonKey: 'key'
+  );
+  
   runApp(MyApp());
 }
 
@@ -35,11 +42,13 @@ class MyAppState extends ChangeNotifier {
 
   var favorites = <WordPair>[];
 
-  void toggleFavorite() {
+  void toggleFavorite() async {
     if (favorites.contains(current)) {
+      await supabase.from('favorites').delete().match({'words': current.asLowerCase});
       print("removing from favorites");
       favorites.remove(current);
     } else {
+      await supabase.from('favorites').insert({'words': current.asLowerCase});
       print("adding to favorites");
       favorites.add(current);
     }
