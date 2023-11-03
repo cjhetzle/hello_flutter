@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hello_flutter/buttons/like.dart';
-import 'package:hello_flutter/main.dart';
-import 'package:provider/provider.dart';
 
 class SmallCard extends StatelessWidget {
   const SmallCard({
