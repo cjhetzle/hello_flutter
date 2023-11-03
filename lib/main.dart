@@ -2,14 +2,19 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final supabase = Supabase.instance.client;
 Future<void> main() async {
-  await Supabase.initialize(
-    url: 'https://jojdqogtckxiypvhpztp.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvamRxb2d0Y2t4aXlwdmhwenRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTg4OTMwOTQsImV4cCI6MjAxNDQ2OTA5NH0.rFud9w095dLZz3r7XIA-uFLhhFr8pQsjoRKHWwbKMBw'
-  );
-  
+  await dotenv.load(fileName: '.env');
+
+  String url = dotenv.get("SB_URL");
+  String key = dotenv.get('SB_KEY');
+
+  print("url: $url");
+
+  await Supabase.initialize(url: url, anonKey: key);
+
   runApp(MyApp());
 }
 
@@ -24,7 +29,8 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 34, 156)),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Color.fromARGB(255, 255, 34, 156)),
         ),
         home: MyHomePage(),
       ),
@@ -44,7 +50,10 @@ class MyAppState extends ChangeNotifier {
 
   void toggleFavorite() async {
     if (favorites.contains(current)) {
-      await supabase.from('favorites').delete().match({'words': current.asLowerCase});
+      await supabase
+          .from('favorites')
+          .delete()
+          .match({'words': current.asLowerCase});
       print("removing from favorites");
       favorites.remove(current);
     } else {
@@ -63,7 +72,6 @@ class MyHomePage extends StatelessWidget {
     var pair = appState.current;
 
     return Scaffold(
-      
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -126,7 +134,6 @@ class LikeButton extends StatelessWidget {
   }
 }
 
-
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
@@ -141,7 +148,7 @@ class BigCard extends StatelessWidget {
 
     final style = theme.textTheme.displayMedium!.copyWith(
       color: theme.colorScheme.onPrimary,
-      );
+    );
 
     return Card(
       color: theme.colorScheme.primary,
