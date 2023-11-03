@@ -25,7 +25,6 @@ class _LikeButtonState extends State<LikeButton> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     liked = widget.liked;
     word = widget.word;

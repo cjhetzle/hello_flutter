@@ -25,15 +25,10 @@ class SmallCard extends StatelessWidget {
       color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Text(
-              word,
-              style: style,
-              //semanticsLabel: "${pair.first} ${pair.second}",
-            ),
-            LikeButton(liked: appState.isFavorite(word), word: word)
-          ],
+        child: Text(
+          word,
+          style: style,
+          //semanticsLabel: "${pair.first} ${pair.second}",
         ),
       ),
     );

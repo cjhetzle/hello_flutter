@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hello_flutter/buttons/like.dart';
 import 'package:hello_flutter/buttons/next.dart';
+import 'package:hello_flutter/buttons/statelesslikebutton.dart';
 import 'package:hello_flutter/labels/bigcard.dart';
 import 'package:hello_flutter/main.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +22,7 @@ class GeneratorPage extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              LikeButton(liked: appState.isFavorite()),
+              StatelessLikeButton(),
               NextButton(),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_flutter/buttons/like.dart';
+import 'package:hello_flutter/labels/smallcard.dart';
 import 'package:hello_flutter/main.dart';
 
 class FavoritesPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class FavoritesPage extends StatelessWidget {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('favs'),
+        SmallCard(word: 'Favorites'),
         for (String pair in favorites)
           Padding(
             padding: const EdgeInsets.all(8.0),
