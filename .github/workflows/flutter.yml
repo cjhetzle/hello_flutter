@@ -29,8 +29,12 @@ jobs:
         run: flutter pub get
 
       - name: Create env file
-        run: echo 'SB_URL='${{ secrets.SB_URL }} > .env; \
-              echo 'SB_KEY='${{ secrets.SB_KEY }} >> .env;
+        env:
+          SB_URL: ${{ secrets.SB_URL }}
+          SB_KEY: ${{ secrets.SB_KEY }}
+        run: |
+          echo 'SB_URL='$SB_URL > .env
+          echo 'SB_KEY='$SB_KEY >> .env
 
       # Uncomment this step to verify the use of 'dart format' on each commit.
       # - name: Verify formatting
