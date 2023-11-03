@@ -36,6 +36,10 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
+      - name: Create env file
+        run: echo 'SB_URL='${{ secrets.SB_URL }} > .env; \
+              echo 'SB_KEY='${{ secrets.SB_KEY }} >> .env;
+      
       # Your project will need to have tests in test/ and a dependency on
       # package:test for this step to succeed. Note that Flutter projects will
       # want to change this to 'flutter test'.
