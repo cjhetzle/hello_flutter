@@ -1,19 +1,27 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:hello_flutter/pages/homepage.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final supabase = Supabase.instance.client;
+bool connectedDB = false;
 Future<void> main() async {
+  // Make sure to create a .env at project
+  // root and create these variables
   await dotenv.load(fileName: '.env');
 
   String url = dotenv.get("SB_URL");
   String key = dotenv.get('SB_KEY');
+  print("connecting db to url: $url");
 
-  print("url: $url");
+  await Supabase.initialize(url: url, anonKey: key)
+      .then((value) => connectedDB = true);
 
-  await Supabase.initialize(url: url, anonKey: key);
+  print(connectedDB ? 'connected...' : 'unable to connect...');
+
+  if (connectedDB) MyAppState.loadFavorites();
 
   runApp(MyApp());
 }
@@ -39,127 +47,38 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
+  var current = WordPair.random().asLowerCase;
+  static var favorites = <String>[];
 
   void getNext() {
-    current = WordPair.random();
+    current = WordPair.random().asLowerCase;
     notifyListeners();
   }
 
-  var favorites = <WordPair>[];
+  bool isFavorite([String word = '']) {
+    if (word.isEmpty) return favorites.contains(current);
+    return favorites.contains(word);
+  }
 
-  void toggleFavorite() async {
-    if (favorites.contains(current)) {
-      await supabase
-          .from('favorites')
-          .delete()
-          .match({'words': current.asLowerCase});
+  static void loadFavorites() async {
+    var words = await supabase.from('favorites').select('words');
+
+    for (var row in words) {
+      print(row['words']);
+      MyAppState.favorites.add(row['words']);
+    }
+  }
+
+  void toggleFavorite(String word) async {
+    if (favorites.contains(word)) {
+      await supabase.from('favorites').delete().match({'words': word});
       print("removing from favorites");
-      favorites.remove(current);
+      favorites.remove(word);
     } else {
-      await supabase.from('favorites').insert({'words': current.asLowerCase});
+      await supabase.from('favorites').insert({'words': word});
       print("adding to favorites");
-      favorites.add(current);
+      favorites.add(word);
     }
     notifyListeners();
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Text('A random idea:'),
-            BigCard(pair: pair),
-            SizedBox(height: 10),
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LikeButton(appState: appState),
-                NextButton(appState: appState),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NextButton extends StatelessWidget {
-  const NextButton({
-    super.key,
-    required this.appState,
-  });
-
-  final MyAppState appState;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        print('next button pressed!');
-        appState.getNext();
-      },
-      child: Text('Next'),
-    );
-  }
-}
-
-class LikeButton extends StatelessWidget {
-  const LikeButton({
-    super.key,
-    required this.appState,
-  });
-
-  final MyAppState appState;
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        print('like button pressed!');
-        appState.toggleFavorite();
-      },
-      child: Text('Like'),
-    );
-  }
-}
-
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
-
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
-        ),
-      ),
-    );
   }
 }
