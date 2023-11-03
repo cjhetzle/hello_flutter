@@ -19,8 +19,6 @@ class SmallCard extends StatelessWidget {
       color: theme.colorScheme.onPrimary,
     );
 
-    var appState = context.watch<MyAppState>();
-
     return Card(
       color: theme.colorScheme.primary,
       child: Padding(
